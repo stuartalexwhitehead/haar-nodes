@@ -6,19 +6,20 @@
 const int i2cAddr = 0x48;
 const int xbeeCts = 11;
 const int xbeeWake = 12;
-const int sleepMinutes = 5;
-const int sleepTotal = (sleepMinutes*60)/8;
+const int sleepTotal = 8;
 volatile int sleepCount = 0;
+const int ledPin = 13;
 
 XBee xbee = XBee();
 
 void setup() {
   configureWatchdog();
   pinMode(xbeeCts, INPUT);
-  pinMode(ledPin, OUTPUT);
   Serial.begin(9600);
   xbee.setSerial(Serial);
   Wire.begin();
+  pinMode(xbeeWake, OUTPUT);
+  digitalWrite(xbeeWake, LOW);
 }
 
 void loop() {
@@ -27,8 +28,8 @@ void loop() {
   if(sleepCount == sleepTotal){
 
     // Wake the XBee module
-    pinMode(xbeeWake, OUTPUT);
-    digitalWrite(xbeeWake, LOW);
+    // pinMode(xbeeWake, OUTPUT);
+    // digitalWrite(xbeeWake, LOW);
 
     // Take temperature reading
     readTemperature();
@@ -37,8 +38,8 @@ void loop() {
     xbee.readPacket(10000);
 
     // Put the XBee modules to sleep
-    pinMode(xbeeWake, INPUT);
-    digitalWrite(xbeeWake, HIGH);
+    // pinMode(xbeeWake, INPUT);
+    // digitalWrite(xbeeWake, HIGH);
 
     // Reset sleep counter
     sleepCount = 0;
