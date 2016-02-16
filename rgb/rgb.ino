@@ -16,7 +16,7 @@ XBee xbee = XBee();
 void setup() {
   configureWatchdog();
   rgbSensor.init();
-  Serial.begin(9600);
+  Serial.begin(57600);
   xbee.setSerial(Serial);
   pinMode(xbeeCts, INPUT);
   pinMode(xbeeWake, OUTPUT);
