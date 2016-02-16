@@ -83,19 +83,7 @@ void readColour(){
   float blueLux = (float) rgbSensor.readBlue();
 
   // Calculate 0 - 255 value based on ratios
-  float maxValue = 0;
-  if (redLux > maxValue) {
-    maxValue = redLux;
-  }
-
-  if (greenLux > maxValue) {
-    maxValue = greenLux;
-  }
-
-  if (blueLux > maxValue) {
-    maxValue = blueLux;
-  }
-
+  float maxValue = max(redLux, max(greenLux, blueLux));
   unsigned int red = (int) ((redLux / maxValue) * 255);
   unsigned int green = (int) ((greenLux / maxValue) * 255);
   unsigned int blue = (int) ((blueLux / maxValue) * 255);
