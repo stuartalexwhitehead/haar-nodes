@@ -14,7 +14,7 @@ void setup() {
   pinMode(greenPin, OUTPUT);
   pinMode(bluePin, OUTPUT);
 
-  Serial.begin(9600);
+  Serial.begin(57600);
   xbee.setSerial(Serial);
 }
 
