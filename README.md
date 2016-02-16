@@ -32,7 +32,7 @@ The ISL29125 measures the intensity of each RGB channel up to 10,000 lux. This s
 ### Main Components
 - Arduino Pro Mini @ 3.3v
 - XBee Series 2 w/ chip antenna
-- [STMicro L3GD20H](http://www.st.com/web/catalog/sense_power/FM89/SC1288/PF254039)
+- [STMicro L3GD20H](http://www.st.com/web/catalog/sense_power/FM89/SC1288/PF254039) on Adafruit breakout board
 
 ### Functionality
 The L3GD20H measures the rate of change of angles in the X, Y and Z axis. The unit of measurement is degrees per second. Rather than wasting battery power, the sensor will sleep when no movement is detected. The L3GD20H will raise an interrupt on movement in any axis. The X, Y and Z values will then be transmitted to the XBee coodinator at a maximum rate of 10 packets per second. 
