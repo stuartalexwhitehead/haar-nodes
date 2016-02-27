@@ -1,4 +1,5 @@
 #include <XBee.h>
+#include <ArduinoJson.h>
 
 const int redPin = 5;
 const int greenPin = 11;
@@ -28,33 +29,19 @@ void loop() {
       // Get payload
       uint8_t* payload = rx.getData(); 
 
-      // Get red value
-      char redDigits[4];
-      redDigits[0] = payload[0];
-      redDigits[1] = payload[1];
-      redDigits[2] = payload[2];
-      redDigits[3] = '\0';
-      int red = atoi(redDigits);
+      StaticJsonBuffer<80> jsonBuffer;
+      JsonObject& root = jsonBuffer.parseObject((char*) payload);
 
-      // Get green value
-      char greenDigits[4];
-      greenDigits[0] = payload[4];
-      greenDigits[1] = payload[5];
-      greenDigits[2] = payload[6];
-      greenDigits[3] = '\0';
-      int green = atoi(greenDigits);
+      if (root.success())
+      {
+        int red = root["red"];
+        int green = root["green"];
+        int blue = root["blue"];
 
-      // Get blue value
-      char blueDigits[4];
-      blueDigits[0] = payload[8];
-      blueDigits[1] = payload[9];
-      blueDigits[2] = payload[10];
-      blueDigits[3] = '\0';
-      int blue = atoi(blueDigits);
-
-      analogWrite(redPin, red);
-      analogWrite(greenPin, green);
-      analogWrite(bluePin, blue);
+        analogWrite(redPin, red);
+        analogWrite(greenPin, green);
+        analogWrite(bluePin, blue);
+      }
     }
   }
 }
