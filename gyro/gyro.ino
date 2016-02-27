@@ -2,6 +2,7 @@
 #include <XBee.h>
 #include <Wire.h>
 #include <Adafruit_L3GD20.h>
+#include <ArduinoJson.h>
 
 // Define global variables
 Adafruit_L3GD20 gyro;
@@ -64,17 +65,18 @@ void handleInterrupt(){
 void readGyro(){
   gyro.read();
 
-  // Create char array of values in format [-]xxx,[-]xxx,[-]xxx
-  char xyz[14];
-  sprintf(xyz, "%+04d,%+04d,%+04d", (int) gyro.data.x, (int) gyro.data.y, (int) gyro.data.z);
-
-  // Convert char array to uint8_t array
-  uint8_t payload[sizeof(xyz)];
-  memcpy(payload, (uint8_t*) xyz, sizeof(xyz));
+  // Encode JSON string
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& root = jsonBuffer.createObject();
+  root["x"].set(gyro.data.x);
+  root["y"].set(gyro.data.y);
+  root["z"].set(gyro.data.z);
+  char buffer[256];
+  root.printTo(buffer, sizeof(buffer));
 
   // Send payload with 
   XBeeAddress64 addr64 = XBeeAddress64(0x00000000, 0x00000000);
-  ZBTxRequest zbTx = ZBTxRequest(addr64, payload, sizeof(payload));
+  ZBTxRequest zbTx = ZBTxRequest(addr64, (uint8_t*) buffer, strlen(buffer));
 
   // Wait for XBee module
   while(digitalRead(xbeeCts) == HIGH);
