@@ -2,6 +2,7 @@
 #include <avr/sleep.h>
 #include <Wire.h>
 #include <XBee.h>
+#include <ArduinoJson.h>
 
 const int i2cAddr = 0x48;
 const int xbeeCts = 11;
@@ -26,20 +27,11 @@ void loop() {
   goToSleep();
 
   if(sleepCount == sleepTotal){
-
-    // Wake the XBee module
-    // pinMode(xbeeWake, OUTPUT);
-    // digitalWrite(xbeeWake, LOW);
-
     // Take temperature reading
     readTemperature();
 
     // Ensure that a packet has been sent
     xbee.readPacket(10000);
-
-    // Put the XBee modules to sleep
-    // pinMode(xbeeWake, INPUT);
-    // digitalWrite(xbeeWake, HIGH);
 
     // Reset sleep counter
     sleepCount = 0;
@@ -96,16 +88,15 @@ void readTemperature(){
   int TemperatureSum = ((MSB << 8) | LSB) >> 4; 
   float celsius = TemperatureSum*0.0625;
 
-  // Convert float to array of chars ([-]xx.xxxx)
-  char temperatureString[8];
-  dtostrf(celsius, 0, 4, temperatureString);
-  
-  // Convert char array to uint8_t array
-  uint8_t payload[sizeof temperatureString];
-  memcpy(payload, (uint8_t*) temperatureString, sizeof temperatureString);
+  // Encode JSON string
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& root = jsonBuffer.createObject();
+  root["temperature"].set(celsius, 4);
+  char buffer[256];
+  root.printTo(buffer, sizeof(buffer));
   
   XBeeAddress64 addr64 = XBeeAddress64(0x00000000, 0x00000000);
-  ZBTxRequest zbTx = ZBTxRequest(addr64, payload, sizeof(payload));
+  ZBTxRequest zbTx = ZBTxRequest(addr64, (uint8_t*) buffer, strlen(buffer));
 
   // Wait for XBee module
   while(digitalRead(xbeeCts) == HIGH);
