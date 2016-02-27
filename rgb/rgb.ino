@@ -2,6 +2,7 @@
 #include <avr/sleep.h>
 #include <XBee.h>
 #include <Wire.h>
+#include <ArduinoJson.h>
 
 // Define global variables
 SFE_ISL29125 rgbSensor;
@@ -88,16 +89,17 @@ void readColour(){
   unsigned int green = (int) ((greenLux / maxValue) * 255);
   unsigned int blue = (int) ((blueLux / maxValue) * 255);
 
-  // Create char array of values in format xxx,xxx,xxx
-  char rgb[11];
-  sprintf(rgb, "%03d,%03d,%03d", red, green, blue);
-  
-  // Convert char array to uint8_t array
-  uint8_t payload[sizeof(rgb)];
-  memcpy(payload, (uint8_t*) rgb, sizeof(rgb));
+  // Encode JSON string
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& root = jsonBuffer.createObject();
+  root["red"].set(red);
+  root["green"].set(green);
+  root["blue"].set(blue);
+  char buffer[256];
+  root.printTo(buffer, sizeof(buffer));
   
   XBeeAddress64 addr64 = XBeeAddress64(0x00000000, 0x00000000);
-  ZBTxRequest zbTx = ZBTxRequest(addr64, payload, sizeof(payload));
+  ZBTxRequest zbTx = ZBTxRequest(addr64, (uint8_t*) buffer, strlen(buffer));
 
   // Wait for XBee module
   while(digitalRead(xbeeCts) == HIGH);
