@@ -79,22 +79,17 @@ ISR(WDT_vect) {
  * ZigBee coordinators always have the 64 byte address 0x0000000000000000
  */
 void readColour(){
-  float redLux = (float) rgbSensor.readRed();
-  float greenLux = (float) rgbSensor.readGreen();
-  float blueLux = (float) rgbSensor.readBlue();
-
-  // Calculate 0 - 255 value based on ratios
-  float maxValue = max(redLux, max(greenLux, blueLux));
-  unsigned int red = (int) ((redLux / maxValue) * 255);
-  unsigned int green = (int) ((greenLux / maxValue) * 255);
-  unsigned int blue = (int) ((blueLux / maxValue) * 255);
-
   // Encode JSON string
-  StaticJsonBuffer<200> jsonBuffer;
-  JsonObject& root = jsonBuffer.createObject();
-  root["red"].set(red);
-  root["green"].set(green);
-  root["blue"].set(blue);
+  StaticJsonBuffer<80> jsonBuffer;
+  JsonArray& root = jsonBuffer.createArray();
+  JsonObject& redValue = root.createNestedObject();
+  JsonObject& greenValue = root.createNestedObject();
+  JsonObject& blueValue = root.createNestedObject();
+
+  redValue["red"].set(rgbSensor.readRed());
+  greenValue["green"].set(rgbSensor.readGreen());
+  blueValue["blue"].set(rgbSensor.readBlue());
+
   char buffer[256];
   root.printTo(buffer, sizeof(buffer));
   
