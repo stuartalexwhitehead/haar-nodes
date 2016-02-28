@@ -66,11 +66,16 @@ void readGyro(){
   gyro.read();
 
   // Encode JSON string
-  StaticJsonBuffer<200> jsonBuffer;
-  JsonObject& root = jsonBuffer.createObject();
-  root["x"].set(gyro.data.x);
-  root["y"].set(gyro.data.y);
-  root["z"].set(gyro.data.z);
+  StaticJsonBuffer<80> jsonBuffer;
+  JsonArray& root = jsonBuffer.createArray();
+  JsonObject& xValue = root.createNestedObject();
+  JsonObject& yValue = root.createNestedObject();
+  JsonObject& zValue = root.createNestedObject();
+
+  xValue["x"].set(gyro.data.x);
+  yValue["y"].set(gyro.data.y);
+  zValue["z"].set(gyro.data.z);
+
   char buffer[256];
   root.printTo(buffer, sizeof(buffer));
 
