@@ -89,9 +89,12 @@ void readTemperature(){
   float celsius = TemperatureSum*0.0625;
 
   // Encode JSON string
-  StaticJsonBuffer<200> jsonBuffer;
-  JsonObject& root = jsonBuffer.createObject();
-  root["temperature"].set(celsius, 4);
+  StaticJsonBuffer<80> jsonBuffer;
+  JsonArray& root = jsonBuffer.createArray();
+  JsonObject& temperatureValue = root.createNestedObject();
+
+  temperatureValue["temperature"].set(celsius, 4);
+
   char buffer[256];
   root.printTo(buffer, sizeof(buffer));
   
