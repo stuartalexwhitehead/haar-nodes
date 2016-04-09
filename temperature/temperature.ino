@@ -90,10 +90,9 @@ void readTemperature(){
 
   // Encode JSON string
   StaticJsonBuffer<80> jsonBuffer;
-  JsonArray& root = jsonBuffer.createArray();
-  JsonObject& temperatureValue = root.createNestedObject();
+  JsonObject& root = jsonBuffer.createObject();
 
-  temperatureValue["temperature"].set(celsius, 4);
+  root["temperature"].set(celsius, 4);
 
   char buffer[256];
   root.printTo(buffer, sizeof(buffer));
