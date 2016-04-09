@@ -38,7 +38,7 @@ void setup() {
 
 void loop() {
   readGyro();
-  delay(100);
+  delay(90);
 
   if (abs(gyro.data.x) <= 10 && abs(gyro.data.y) <= 10 && abs(gyro.data.z <= 10)) {
     attachInterrupt(digitalPinToInterrupt(interruptPin), handleInterrupt, CHANGE);
@@ -67,14 +67,11 @@ void readGyro(){
 
   // Encode JSON string
   StaticJsonBuffer<80> jsonBuffer;
-  JsonArray& root = jsonBuffer.createArray();
-  JsonObject& xValue = root.createNestedObject();
-  JsonObject& yValue = root.createNestedObject();
-  JsonObject& zValue = root.createNestedObject();
+  JsonObject& root = jsonBuffer.createObject();
 
-  xValue["x"].set(gyro.data.x);
-  yValue["y"].set(gyro.data.y);
-  zValue["z"].set(gyro.data.z);
+  root["x"].set(gyro.data.x);
+  root["y"].set(gyro.data.y);
+  root["z"].set(gyro.data.z);
 
   char buffer[256];
   root.printTo(buffer, sizeof(buffer));
@@ -84,7 +81,7 @@ void readGyro(){
   ZBTxRequest zbTx = ZBTxRequest(addr64, (uint8_t*) buffer, strlen(buffer));
 
   // Wait for XBee module
-  while(digitalRead(xbeeCts) == HIGH);
+  //while(digitalRead(xbeeCts) == HIGH);
 
   xbee.send(zbTx);
 }
