@@ -81,14 +81,11 @@ ISR(WDT_vect) {
 void readColour(){
   // Encode JSON string
   StaticJsonBuffer<80> jsonBuffer;
-  JsonArray& root = jsonBuffer.createArray();
-  JsonObject& redValue = root.createNestedObject();
-  JsonObject& greenValue = root.createNestedObject();
-  JsonObject& blueValue = root.createNestedObject();
+  JsonObject& root = jsonBuffer.createObject();
 
-  redValue["red"].set(rgbSensor.readRed());
-  greenValue["green"].set(rgbSensor.readGreen());
-  blueValue["blue"].set(rgbSensor.readBlue());
+  root["red"].set(rgbSensor.readRed());
+  root["green"].set(rgbSensor.readGreen());
+  root["blue"].set(rgbSensor.readBlue());
 
   char buffer[256];
   root.printTo(buffer, sizeof(buffer));
